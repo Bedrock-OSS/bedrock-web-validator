@@ -1,0 +1,6 @@
+{
+  "title": "Texture List",
+  "description": "A list of texture to load in",
+  "type": "array",
+  "items": { "title": "Filepath", "type": "string", "pattern": "^textures/", "examples": ["textures/blocks/"] }
+}

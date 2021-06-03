@@ -1,0 +1,7 @@
+{
+  "$id": "blockception.minecraft.fog.identifier",
+  "type": "string",
+  "title": "Fog Identifier",
+  "description": "The minecraft fog identifier",
+  "pattern": "^[0-9a-zA-Z:_\\.\\-]+$"
+}

@@ -1,0 +1,13 @@
+{
+  "$id": "Version",
+  "type": "array",
+  "title": "Version Numbering",
+  "description": "A version made of 3 numbers",
+  "minItems": 3,
+  "maxItems": 3,
+  "items": [
+    { "type": "number", "minimum": 1 },
+    { "type": "number", "minimum": 0 },
+    { "type": "number", "minimum": 0 }
+  ]
+}

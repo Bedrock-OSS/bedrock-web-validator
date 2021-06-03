@@ -1,0 +1,8 @@
+{
+  "$id": "blockception.minecraft.resource.fog",
+  "examples": [],
+  "allOf": [
+    { "if": { "properties": { "format_version": { "type": "string", "const": "1.16.100" } } }, "then": { "$ref": "./1.16.100/fog.json" } },
+    { "properties": { "format_version": { "$ref": "../../general/format_version.json" } } }
+  ]
+}

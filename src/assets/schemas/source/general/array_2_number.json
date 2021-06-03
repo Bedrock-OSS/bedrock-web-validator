@@ -1,0 +1,9 @@
+{
+  "$id": "general.array.number.2",
+  "type": "array",
+  "title": "Array Of 2 Items",
+  "description": "An array of 2 numbers",
+  "minimum": 2,
+  "maximum": 2,
+  "items": { "type": "number", "description": "An number", "title": "TODO Title" }
+}

@@ -1,0 +1,47 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "definitions": {
+    "object_check": {
+      "type": "object",
+      "dependencies": {
+        "description": ["title"]
+      },
+      "additionalProperties": {
+        "anyOf": [
+          {
+            "type": "object",
+            "properties": {
+              "properties": { "additionalProperties": { "$ref": "#/definitions/object_check" } },
+              "additionalProperties": { "additionalProperties": { "$ref": "#/definitions/object_check" } }
+            }
+          },
+          { "type": "array", "$ref": "#/definitions/array_check" },
+          { "type": "string" },
+          { "type": "boolean" },
+          { "type": "number" },
+          { "type": "integer" }
+        ]
+      }
+    },
+    "array_check": {
+      "items": {
+        "anyOf": [
+          { "type": "object", "$ref": "#/definitions/object_check" },
+          { "type": "array", "$ref": "#/definitions/array_check" },
+          { "type": "string" },
+          { "type": "boolean" },
+          { "type": "number" },
+          { "type": "integer" }
+        ]
+      }
+    }
+  },
+  "anyOf": [
+    { "type": "object", "$ref": "#/definitions/object_check" },
+    { "type": "array", "$ref": "#/definitions/array_check" },
+    { "type": "string" },
+    { "type": "boolean" },
+    { "type": "number" },
+    { "type": "integer" }
+  ]
+}

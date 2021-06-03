@@ -1,0 +1,7 @@
+{
+  "$id": "blockception.minecraft.resource.particle.1.10.0.particle_appearance_lighting",
+  "type": "object",
+  "title": "Particle Appearance Lighting Component For 1.10.0",
+  "additionalProperties": false,
+  "description": "TODO description"
+}
