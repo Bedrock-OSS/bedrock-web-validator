@@ -6,7 +6,10 @@
     "build": "vite build"
   },
   "dependencies": {
-    "vue": "^3.0.4"
+    "ajv": "^8.5.0",
+    "prismjs": "^1.23.0",
+    "vue": "^3.0.4",
+    "vue-prism-editor": "^2.0.0-alpha.2"
   },
   "devDependencies": {
     "@vue/compiler-sfc": "^3.0.4",
