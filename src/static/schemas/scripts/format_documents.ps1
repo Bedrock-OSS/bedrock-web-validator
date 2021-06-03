@@ -1,1 +1,0 @@
-npx prettier --write "source/**/*.json" --config ./scripts/json.prettierrc.json

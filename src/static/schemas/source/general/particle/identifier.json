@@ -1,7 +1,0 @@
-{
-  "$id": "blockception.minecraft.particle.identifier.1.8.0",
-  "type": "string",
-  "title": "Particle Identifier 1.8.0",
-  "description": "The minecraft particle identifier",
-  "pattern": "^[0-9a-zA-Z:_\\.\\-]+$"
-}

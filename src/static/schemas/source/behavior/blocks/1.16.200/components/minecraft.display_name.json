@@ -1,7 +1,0 @@
-{
-  "$id": "blockception.minecraft.behavior.blocks.1.16.200.minecraft.display_name",
-  "additionalProperties": false,
-  "type": "string",
-  "title": "Display Name 1.16.200",
-  "description": "Specifies the display name id for the block."
-}

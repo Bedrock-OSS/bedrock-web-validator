@@ -1,8 +1,0 @@
-{
-  "$id": "blockception.minecraft.behavior.entities.filters.subject",
-  "title": "Filters Subject",
-  "type": "string",
-  "description": "The subject of this filter test.",
-  "default": "self",
-  "enum": ["block", "other", "parent", "player", "self", "target", "damager"]
-}

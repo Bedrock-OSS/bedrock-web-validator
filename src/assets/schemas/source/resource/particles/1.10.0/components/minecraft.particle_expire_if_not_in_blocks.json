@@ -1,8 +1,0 @@
-{
-  "$id": "blockception.minecraft.resource.particle.1.10.0.particle_expire_if_not_in_blocks",
-  "type": "array",
-  "title": "Particle Expire If Not In Blocks Component For 1.10.0",
-  "additionalProperties": false,
-  "items": { "$ref": "../../../../general/block/identifier.json", "description": "TODO description", "title": "TODO Title" },
-  "description": "TODO description"
-}

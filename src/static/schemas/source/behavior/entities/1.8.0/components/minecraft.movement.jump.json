@@ -1,9 +1,0 @@
-{
-  "$id": "blockception.minecraft.behavior.entities.1.8.0.minecraft.movement.fly",
-  "type": "object",
-  "title": "Movement.fly 1.8.0",
-  "additionalProperties": false,
-  "required": [],
-  "properties": {},
-  "description": "TODO description"
-}
