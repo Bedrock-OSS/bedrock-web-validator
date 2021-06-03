@@ -35,8 +35,10 @@ import 'prismjs/components/prism-json'
 import Ajv from 'ajv'
 import { defineComponent, onMounted, ref } from 'vue'
 
+// Schemas
+import skinpacks from '/public/schemas/skinpacks/skin.json'
+
 // https://raw.githubusercontent.com/Blockception/Minecraft-bedrock-json-schemas/main/skinpacks/skins.json
-function getJson()
 export default defineComponent({
 	components: {
 		PrismEditor,
@@ -86,8 +88,10 @@ export default defineComponent({
 			cap: 1,
 			bar: 1,
 		}
+		console.log(skinpacks)
 
 		const valid = validate(data)
+
 		if (!valid) {
 			console.log(validate.errors)
 		} else {

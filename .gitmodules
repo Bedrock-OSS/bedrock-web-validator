@@ -1,6 +1,11 @@
 [submodule "schemas"]
 	path = schemas
 	url = https://github.com/Blockception/Minecraft-bedrock-json-schemas.git
-[submodule "src/static/schemas"]
+
+[submodule "sschemas"]
+	path = src/assets/schemas
+	url = https://github.com/Blockception/Minecraft-bedrock-json-schemas.git
+
+[submodule "ssschemas"]
 	path = src/static/schemas
 	url = https://github.com/Blockception/Minecraft-bedrock-json-schemas.git
