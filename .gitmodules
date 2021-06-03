@@ -1,0 +1,3 @@
+[submodule "Minecraft-bedrock-json-schemas"]
+	path = Minecraft-bedrock-json-schemas
+	url = https://github.com/Blockception/Minecraft-bedrock-json-schemas.git
