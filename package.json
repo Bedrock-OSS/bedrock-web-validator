@@ -1,21 +1,22 @@
 {
-  "name": "bso",
-  "version": "0.0.0",
-  "scripts": {
-    "dev": "vite",
-    "build": "vite build"
-  },
-  "dependencies": {
-    "ajv": "^8.5.0",
-    "prismjs": "^1.23.0",
-    "vue": "^3.0.4",
-    "vue-prism-editor": "^2.0.0-alpha.2"
-  },
-  "devDependencies": {
-    "@vue/compiler-sfc": "^3.0.4",
-    "autoprefixer": "^10.2.6",
-    "postcss": "^8.3.0",
-    "tailwindcss": "^2.1.4",
-    "vite": "^1.0.0-rc.13"
-  }
+	"name": "bso",
+	"version": "0.0.0",
+	"scripts": {
+		"dev": "vite",
+		"build": "vite build"
+	},
+	"dependencies": {
+		"ajv": "^8.5.0",
+		"prismjs": "^1.23.0",
+		"require": "^2.4.20",
+		"vue": "^3.0.4",
+		"vue-prism-editor": "^2.0.0-alpha.2"
+	},
+	"devDependencies": {
+		"@vue/compiler-sfc": "^3.0.4",
+		"autoprefixer": "^10.2.6",
+		"postcss": "^8.3.0",
+		"tailwindcss": "^2.1.4",
+		"vite": "^1.0.0-rc.13"
+	}
 }

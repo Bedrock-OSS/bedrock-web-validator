@@ -13,6 +13,11 @@
 	>
 		Format
 	</button>
+	<Message
+		v-for="message in this.messages"
+		:title="BOB"
+		:message="message"
+	></Message>
 	<div>
 		<prism-editor
 			class="my-editor height-200 mb-4"
@@ -25,7 +30,9 @@
 
 <script>
 // import Prism Editor
-import { PrismEditor } from 'vue-prism-editor' //
+import { PrismEditor } from 'vue-prism-editor'
+import Message from './Message.vue'
+
 import 'vue-prism-editor/dist/prismeditor.min.css' // import the styles somewhere
 
 // import highlighting library (you can use any library you want just return html string)
@@ -35,16 +42,53 @@ import 'prismjs/components/prism-json'
 import Ajv from 'ajv'
 import { defineComponent, onMounted, ref } from 'vue'
 
-// Schemas
-import skinpacks from '/public/schemas/skinpacks/skin.json'
+let language_names_url =
+	'https://raw.githubusercontent.com/Blockception/Minecraft-bedrock-json-schemas/main/language/language_names.json'
 
-// https://raw.githubusercontent.com/Blockception/Minecraft-bedrock-json-schemas/main/skinpacks/skins.json
+let languages_url =
+	'https://raw.githubusercontent.com/Blockception/Minecraft-bedrock-json-schemas/main/language/languages.json'
+
+async function fetchJson(url) {
+	return new Promise((resolve, reject) => {
+		fetch(url)
+			.then((res) => res.json())
+			.then((out) => {
+				resolve(out)
+			})
+			.catch((err) => {
+				reject(out)
+			})
+	})
+}
+async function loadAllSchemas(ajv) {
+	const proms = []
+	await proms.push(fetchJson(language_names_url))
+	await proms.push(fetchJson(languages_url))
+
+	const [language_names, languages] = await Promise.all(proms)
+	ajv.addSchema(language_names)
+	console.log('SCHEMAS LOADED!')
+	return ajv.compile(languages)
+}
+
+//Advanced Schema Validator
+const ajv = new Ajv()
+var validate
+loadAllSchemas(ajv).then((value) => (validate = value))
+
 export default defineComponent({
 	components: {
 		PrismEditor,
+		Message,
+	},
+	data() {
+		return {
+			messages: ['nothing to show'],
+		}
 	},
 	methods: {
 		format() {
+			this.messages = []
 			try {
 				this.editorCode = JSON.stringify(
 					JSON.parse(this.editorCode),
@@ -52,51 +96,28 @@ export default defineComponent({
 					3
 				)
 			} catch (err) {
-				console.log(err.message)
+				this.messages.push(err.message)
+				return
+			}
+
+			const testData = JSON.parse(this.editorCode)
+
+			const valid = validate(testData)
+
+			console.log('Attempting to validate: ')
+			console.log(testData)
+
+			if (!valid) {
+				validate.errors.forEach((element) => {
+					this.messages.push(element)
+				})
+			} else {
+				this.messages.push('Looks Ok to Me!')
 			}
 		},
 	},
 	setup(props, context) {
 		const editorCode = ref('hey')
-		const ajv = new Ajv() // options can be passed, e.g. {allErrors: true}
-
-		const schema = {
-			$id: 'http://example.com/schemas/schema.json',
-			type: 'object',
-			properties: {
-				foo: { $ref: 'defs.json#/definitions/int' },
-				bar: { $ref: 'defs.json#/definitions/str' },
-			},
-		}
-
-		const defsSchema = {
-			$id: 'http://example.com/schemas/defs.json',
-			definitions: {
-				int: { type: 'integer' },
-				str: { type: 'string' },
-			},
-		}
-
-		// Add definitions
-		ajv.addSchema(defsSchema)
-
-		// Compile
-		const validate = ajv.compile(schema)
-
-		const data = {
-			foo: 1,
-			cap: 1,
-			bar: 1,
-		}
-		console.log(skinpacks)
-
-		const valid = validate(data)
-
-		if (!valid) {
-			console.log(validate.errors)
-		} else {
-			console.log('BOB')
-		}
 
 		const highlighter = (code) => {
 			return prism.highlight(code, prism.languages.json)
