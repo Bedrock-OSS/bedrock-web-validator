@@ -1,4 +1,10 @@
 <template>
+	<select v-model="selected">
+		<option v-bind:value="schema" v-for="schema in this.compiledSchemas">
+			{{ schema.name }}
+		</option>
+	</select>
+
 	<button
 		@click="format"
 		class="
@@ -15,8 +21,8 @@
 	</button>
 	<Message
 		v-for="message in this.messages"
-		:title="BOB"
-		:message="message"
+		:title="message.title"
+		:message="message.message"
 	></Message>
 	<div>
 		<prism-editor
@@ -42,53 +48,88 @@ import 'prismjs/components/prism-json'
 import Ajv from 'ajv'
 import { defineComponent, onMounted, ref } from 'vue'
 
-let language_names_url =
-	'https://raw.githubusercontent.com/Blockception/Minecraft-bedrock-json-schemas/main/language/language_names.json'
+import schemas from '../static/schemas.json'
+import molang from '../static/molang.json'
 
-let languages_url =
-	'https://raw.githubusercontent.com/Blockception/Minecraft-bedrock-json-schemas/main/language/languages.json'
-
-async function fetchJson(url) {
+async function fetchJson(data) {
 	return new Promise((resolve, reject) => {
-		fetch(url)
+		fetch(data['url'])
 			.then((res) => res.json())
 			.then((out) => {
-				resolve(out)
+				data['data'] = out
+				resolve(data)
 			})
 			.catch((err) => {
 				reject(out)
 			})
 	})
 }
+
+// Import json schemas, and store in-memory
+
+var validate
 async function loadAllSchemas(ajv) {
 	const proms = []
-	await proms.push(fetchJson(language_names_url))
-	await proms.push(fetchJson(languages_url))
 
-	const [language_names, languages] = await Promise.all(proms)
-	ajv.addSchema(language_names)
-	console.log('SCHEMAS LOADED!')
-	return ajv.compile(languages)
+	// Queue up schemas for download
+	for (const schema of schemas) {
+		proms.push(fetchJson(schema))
+	}
+
+	// Wait for all schemas to be downloaded before going forward
+	await Promise.all(proms).then((values) => {
+		// Add all schemas
+		values.forEach((element) => {
+			ajv.addSchema(element['data'], element['id'])
+		})
+
+		ajv.addFormat('molang', molang)
+
+		for (const schema of schemas) {
+			if (schema['compile'] == true) {
+				schema['validator'] = ajv.getSchema(schema['id'])
+			}
+		}
+
+		validate = ajv.getSchema('languages')
+	})
 }
 
 //Advanced Schema Validator
-const ajv = new Ajv()
-var validate
-loadAllSchemas(ajv).then((value) => (validate = value))
+const ajv = new Ajv({ strict: false })
+
+loadAllSchemas(ajv)
 
 export default defineComponent({
 	components: {
 		PrismEditor,
 		Message,
 	},
+	computed: {
+		compiledSchemas() {
+			return this.schemas.filter((element) => element['compile'])
+		},
+	},
 	data() {
 		return {
-			messages: ['nothing to show'],
+			selected: {},
+			schemas: schemas,
+			messages: [],
 		}
 	},
 	methods: {
-		format() {
+		clearMessages() {
 			this.messages = []
+		},
+		addMessage(title, message) {
+			this.messages.push({ message: message, title: title })
+		},
+		getValidator() {
+			return this.selected['validator']
+		},
+		format() {
+			this.clearMessages()
+
 			try {
 				this.editorCode = JSON.stringify(
 					JSON.parse(this.editorCode),
@@ -96,23 +137,31 @@ export default defineComponent({
 					3
 				)
 			} catch (err) {
-				this.messages.push(err.message)
+				this.addMessage('Your JSON is not valid:', err.message)
 				return
 			}
 
 			const testData = JSON.parse(this.editorCode)
 
-			const valid = validate(testData)
-
-			console.log('Attempting to validate: ')
-			console.log(testData)
+			const valid = this.getValidator()(testData)
 
 			if (!valid) {
-				validate.errors.forEach((element) => {
-					this.messages.push(element)
-				})
+				console.log(validate.errors)
+				try {
+					validate.errors.forEach((element) => {
+						this.addMessage(
+							'Your JSON did not match the schema:',
+							element
+						)
+					})
+				} catch (error) {
+					this.addMessage(
+						'Your JSON could not be understood',
+						'Did you select wrong schema type?'
+					)
+				}
 			} else {
-				this.messages.push('Looks Ok to Me!')
+				this.addMessage('Your JSON is correct!', 'Congrats!')
 			}
 		},
 	},
