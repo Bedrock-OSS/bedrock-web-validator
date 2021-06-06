@@ -149,19 +149,21 @@ export default defineComponent({
 
 			const validate = this.getValidator()
 			const valid = validate(testData)
-			console.log(validate.errors)
-			console.log(ajv.errors)
-			console.log(ajv)
-			console.log(ajv.errorsText())
-			ErrorPrettifier.prettify(this.editorCode, validate.errors[0]);
 
 			if (!valid) {
 				try {
 					validate.errors.forEach((element) => {
-						this.addMessage(
-							'Your JSON did not match the schema:',
+						const prettyError = ErrorPrettifier.prettify(
+							this.editorCode,
 							element
 						)
+						this.addMessage('Pretty error:', prettyError['message'])
+
+						// Not pretty message ::
+						// this.addMessage(
+						// 	'Your JSON did not match the schema:',
+						// 	element
+						// )
 					})
 				} catch (error) {
 					this.addMessage(
