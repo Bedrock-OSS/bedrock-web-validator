@@ -57,6 +57,9 @@ import schemas from '../static/schemas.json'
 import molang from '../static/molang.json'
 import ErrorPrettifier from '../ErrorPrettifier'
 
+import * as skins_validator from '../static/schemas/skins.js'
+import * as bp_entities from '../static/schemas/bp_entity.js'
+
 async function fetchJson(data) {
 	return new Promise((resolve, reject) => {
 		fetch(data['url'])
@@ -105,7 +108,7 @@ async function loadAllSchemas(ajv) {
 		})
 
 		ajv.addFormat('molang', molang)
-
+		console.log('doing something!')
 		for (const schema of schemas) {
 			if (schema['compile'] == true) {
 				schema['validator'] = ajv.getSchema(schema['id'])
@@ -157,7 +160,22 @@ export default defineComponent({
 	data() {
 		return {
 			selected: {},
-			schemas: schemas,
+			skins_validator,
+			bp_entities,
+			schemas: [
+				{
+					id: 'skins',
+					name: 'Skins',
+					compile: true,
+					validator: skins_validator,
+				},
+				{
+					id: 'bp_entities',
+					name: 'BP: Entity',
+					compile: true,
+					validator: bp_entities,
+				},
+			],
 			messages: [],
 			ranges: [],
 		}
@@ -170,7 +188,10 @@ export default defineComponent({
 			this.messages.push({ message: message, title: title })
 		},
 		getValidator() {
-			return this.selected['validator']
+			const v = this.selected['validator']
+			console.log('Fetching!')
+			console.log(v)
+			return v
 		},
 		format() {
 			this.clearMessages()
@@ -189,7 +210,9 @@ export default defineComponent({
 
 			const testData = JSON.parse(this.editorCode)
 
-			const validate = this.getValidator()
+			const validate = this.getValidator()['default']
+			console.log('Validating')
+			console.log(validate)
 			const valid = validate(testData)
 
 			if (!valid) {
@@ -209,13 +232,6 @@ export default defineComponent({
 							start: prettyError['start']['offset'],
 							end: prettyError['end']['offset'],
 						})
-
-						console.log(prettyError)
-						// Not pretty message ::
-						// this.addMessage(
-						// 	'Your JSON did not match the schema:',
-						// 	element
-						// )
 					})
 				} catch (error) {
 					this.addMessage(
@@ -229,7 +245,7 @@ export default defineComponent({
 		},
 	},
 	setup(props, context) {
-		const editorCode = ref('hey')
+		const editorCode = ref('{}')
 
 		const highlighter = (code) => {
 			return prism.highlight(code, prism.languages.json)
