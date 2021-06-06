@@ -50,6 +50,7 @@ import { defineComponent, onMounted, ref } from 'vue'
 
 import schemas from '../static/schemas.json'
 import molang from '../static/molang.json'
+import ErrorPrettifier from '../ErrorPrettifier'
 
 async function fetchJson(data) {
 	return new Promise((resolve, reject) => {
@@ -152,6 +153,7 @@ export default defineComponent({
 			console.log(ajv.errors)
 			console.log(ajv)
 			console.log(ajv.errorsText())
+			ErrorPrettifier.prettify(this.editorCode, validate.errors[0]);
 
 			if (!valid) {
 				try {
