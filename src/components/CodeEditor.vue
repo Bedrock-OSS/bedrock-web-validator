@@ -90,13 +90,16 @@ async function loadAllSchemas(ajv) {
 				schema['validator'] = ajv.getSchema(schema['id'])
 			}
 		}
-
-		validate = ajv.getSchema('languages')
 	})
 }
 
 //Advanced Schema Validator
-const ajv = new Ajv({ strict: false })
+const ajv = new Ajv({
+	strict: false,
+	allErrors: true,
+	verbose: true,
+	validateFormats: false,
+})
 
 loadAllSchemas(ajv)
 
@@ -143,10 +146,14 @@ export default defineComponent({
 
 			const testData = JSON.parse(this.editorCode)
 
-			const valid = this.getValidator()(testData)
+			const validate = this.getValidator()
+			const valid = validate(testData)
+			console.log(validate.errors)
+			console.log(ajv.errors)
+			console.log(ajv)
+			console.log(ajv.errorsText())
 
 			if (!valid) {
-				console.log(validate.errors)
 				try {
 					validate.errors.forEach((element) => {
 						this.addMessage(

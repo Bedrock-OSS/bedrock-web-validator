@@ -1,20 +1,8 @@
 [
 	{
-		"id": "behavior_animation_controllers",
-		"name": "BPAC",
+		"id": "bp_entity",
+		"name": "BP: Entity",
 		"compile": true,
-		"url": "https://raw.githubusercontent.com/Blockception/Minecraft-bedrock-json-schemas/main/behavior/animation_controllers/animation_controller.json"
-	},
-	{
-		"id": "language_names",
-		"name": "Language Names",
-		"compile": false,
-		"url": "https://raw.githubusercontent.com/Blockception/Minecraft-bedrock-json-schemas/main/language/language_names.json"
-	},
-	{
-		"id": "languages",
-		"name": "Languages",
-		"compile": true,
-		"url": "https://raw.githubusercontent.com/Blockception/Minecraft-bedrock-json-schemas/main/language/languages.json"
+		"url": "https://raw.githubusercontent.com/Blockception/Minecraft-bedrock-json-schemas/main/behavior/entities/entities.json"
 	}
 ]

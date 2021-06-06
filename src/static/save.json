@@ -1,0 +1,38 @@
+[
+	{
+		"id": "bp_entity",
+		"name": "BP: Entity",
+		"compile": true,
+		"url": "https://raw.githubusercontent.com/Blockception/Minecraft-bedrock-json-schemas/main/behavior/entities/entities.json"
+	},
+	{
+		"id": "biomes",
+		"name": "Biome",
+		"compile": true,
+		"url": "https://raw.githubusercontent.com/Blockception/Minecraft-bedrock-json-schemas/main/behavior/biomes/biomes.json"
+	},
+	{
+		"id": "bp_animations",
+		"name": "BP: Animation",
+		"compile": true,
+		"url": "https://raw.githubusercontent.com/Blockception/Minecraft-bedrock-json-schemas/main/behavior/animations/animations.json"
+	},
+	{
+		"id": "bp_animation_controller",
+		"name": "BP: Animation Controller",
+		"compile": true,
+		"url": "https://raw.githubusercontent.com/Blockception/Minecraft-bedrock-json-schemas/main/behavior/animation_controllers/animation_controller.json"
+	},
+	{
+		"id": "language_names",
+		"name": "Language Names",
+		"compile": false,
+		"url": "https://raw.githubusercontent.com/Blockception/Minecraft-bedrock-json-schemas/main/language/language_names.json"
+	},
+	{
+		"id": "languages",
+		"name": "Languages",
+		"compile": true,
+		"url": "https://raw.githubusercontent.com/Blockception/Minecraft-bedrock-json-schemas/main/language/languages.json"
+	}
+]
