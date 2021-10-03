@@ -2,7 +2,6 @@
 	"editor.defaultFormatter": "esbenp.prettier-vscode",
 	"editor.formatOnSave": true,
 	"volar.tsPlugin": true,
-	"cSpell.words": [
-		"alse"
-	]
+	"cSpell.words": ["alse"],
+	"python.pythonPath": "c:\\liam\\git\\bso\\server\\venv\\Scripts\\python.exe"
 }
