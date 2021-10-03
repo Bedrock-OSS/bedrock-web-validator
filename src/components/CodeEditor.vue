@@ -58,7 +58,6 @@ import molang from '../static/molang.json'
 import ErrorPrettifier from '../ErrorPrettifier'
 
 import * as skins_validator from '../static/schemas/skins.js'
-import * as bp_entities from '../static/schemas/bp_entity.js'
 
 async function fetchJson(data) {
 	return new Promise((resolve, reject) => {
@@ -161,19 +160,12 @@ export default defineComponent({
 		return {
 			selected: {},
 			skins_validator,
-			bp_entities,
 			schemas: [
 				{
 					id: 'skins',
 					name: 'Skins',
 					compile: true,
 					validator: skins_validator,
-				},
-				{
-					id: 'bp_entities',
-					name: 'BP: Entity',
-					compile: true,
-					validator: bp_entities,
 				},
 			],
 			messages: [],
