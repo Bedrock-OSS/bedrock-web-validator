@@ -186,9 +186,11 @@ export default defineComponent({
 			return v
 		},
 		format() {
+			// Clear old runs
 			this.clearMessages()
 			this.ranges = []
 
+			// Get editor code
 			try {
 				this.editorCode = JSON.stringify(
 					JSON.parse(this.editorCode),
@@ -200,19 +202,23 @@ export default defineComponent({
 				return
 			}
 
+			// Validate
 			const testData = JSON.parse(this.editorCode)
 
-			const validate = this.getValidator()['default']
-			console.log('Validating')
-			console.log(validate)
-			const valid = validate(testData)
-
-			if (!valid) {
-				try {
-					validate.errors.forEach((element) => {
+			// Fetch and display errors
+			fetch('http://127.0.0.1:5000/api/validate_schema', {
+				method: 'POST',
+				body: testData,
+				headers: {
+					'Content-Type': 'application/json',
+				},
+			})
+				.then((response) => response.json())
+				.then((error) => {
+					try {
 						const prettyError = ErrorPrettifier.prettify(
 							this.editorCode,
-							element
+							error
 						)
 
 						if (prettyError['message'].includes('"then"')) {
@@ -224,16 +230,13 @@ export default defineComponent({
 							start: prettyError['start']['offset'],
 							end: prettyError['end']['offset'],
 						})
-					})
-				} catch (error) {
-					this.addMessage(
-						'Your JSON could not be understood',
-						'Did you select wrong schema type?'
-					)
-				}
-			} else {
-				this.addMessage('Your JSON is correct!', 'Congrats!')
-			}
+					} catch (error) {
+						this.addMessage(
+							'Your JSON could not be understood',
+							'Did you select wrong schema type?' + error.message
+						)
+					}
+				})
 		},
 	},
 	setup(props, context) {

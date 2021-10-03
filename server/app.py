@@ -3,8 +3,10 @@ from flask import request
 from jsonschema import validate
 from jsonschema.exceptions import ValidationError
 import json
+from flask_cors import CORS, cross_origin
 
 app = Flask(__name__)
+CORS(app)
 
 @app.route("/")
 def hello_world():
@@ -32,6 +34,7 @@ def validate_schema():
             except ValidationError as e:
                 return {
                     'message': e.message,
+                    'path': '/'.join(e.absolute_path),
                     'validator': e.validator,
                     'validator_value': e.validator_value,
                     'json_path': e.json_path
