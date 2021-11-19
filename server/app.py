@@ -14,39 +14,47 @@ def hello_world():
 
 @app.route('/api/validate_schema', methods=['GET', 'POST'])
 def validate_schema():
-    if request.method == 'GET':
-        return "No"
-    else:
+    if request.method == 'POST':
         content = request.json
-        schema_name = content['schema_name']
-        data = content['data']
+        schema_name = str(content['schema_name'])
+        data = json.loads(content['data'])
         
-        if schema_name == 'user':
-            print("User!")
-            schema = get_schema()
+        schema = get_schema(schema_name)
 
+        if schema is None:
+            return {
+                'valid': False,
+                'message': 'Schema not found.'
+            }
 
-            print(schema)
+        try:
+            validate(data, schema)
+        except ValidationError as e:
+            print(e)
+            message =  {
+                'valid': False,
+                'message': str(e),
+                'path': '/'.join([str(x) for x in e.absolute_path]),
+                'validator': e.validator,
+                'validator_value': e.validator_value,
+                'json_path': e.json_path
+            }
+            
+            print(json.dumps(message, indent=2))
+            return message
+        else:
+            return {
+                'valid': True
+            }
+    else:
+        return "Not a valid request"
 
-
-            try:
-                validate(data, schema)
-            except ValidationError as e:
-                return {
-                    'message': e.message,
-                    'path': '/'.join(e.absolute_path),
-                    'validator': e.validator,
-                    'validator_value': e.validator_value,
-                    'json_path': e.json_path
-                }
-            else:
-                return "Valid"
-
-        if schema_name == 'skin':
-            return "Skin"
-
-        return "Not a valid schema"
-
-def get_schema(): 
-    with open('../schemas/skinpacks/skins.json', 'r', encoding="utf-8-sig") as f:
+def load_schema(path):
+    with open(path, 'r', encoding="utf-8-sig") as f:
         return json.load(f)
+
+def get_schema(schema_name):
+    try:
+        return load_schema(schema_path = 'schemas/' + schema_name + '.json')
+    except FileNotFoundError:
+        return None

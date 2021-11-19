@@ -1,6 +1,6 @@
 <template>
 	<select v-model="selected">
-		<option v-bind:value="schema" v-for="schema in this.compiledSchemas">
+		<option v-bind:value="schema" v-for="schema in this.schemaOptions">
 			{{ schema.name }}
 		</option>
 	</select>
@@ -50,28 +50,11 @@ import 'vue-prism-editor/dist/prismeditor.min.css' // import the styles somewher
 import prism from 'prismjs'
 import 'prismjs/themes/prism-tomorrow.css' // import syntax highlighting styles
 import 'prismjs/components/prism-json'
-import Ajv from 'ajv'
 import { defineComponent, onMounted, ref } from 'vue'
 
-import schemas from '../static/schemas.json'
-import molang from '../static/molang.json'
 import ErrorPrettifier from '../ErrorPrettifier'
 
 import * as skins_validator from '../static/schemas/skins.js'
-
-async function fetchJson(data) {
-	return new Promise((resolve, reject) => {
-		fetch(data['url'])
-			.then((res) => res.json())
-			.then((out) => {
-				data['data'] = out
-				resolve(data)
-			})
-			.catch((err) => {
-				reject(out)
-			})
-	})
-}
 
 // https://stackoverflow.com/questions/4313841/insert-a-string-at-a-specific-index
 String.prototype.insert = function (index, string) {
@@ -89,43 +72,6 @@ String.prototype.replaceAt = function (index, replacement) {
 	)
 }
 
-// Import json schemas, and store in-memory
-var validate
-async function loadAllSchemas(ajv) {
-	const proms = []
-
-	// Queue up schemas for download
-	for (const schema of schemas) {
-		proms.push(fetchJson(schema))
-	}
-
-	// Wait for all schemas to be downloaded before going forward
-	await Promise.all(proms).then((values) => {
-		// Add all schemas
-		values.forEach((element) => {
-			ajv.addSchema(element['data'], element['id'])
-		})
-
-		ajv.addFormat('molang', molang)
-		console.log('doing something!')
-		for (const schema of schemas) {
-			if (schema['compile'] == true) {
-				schema['validator'] = ajv.getSchema(schema['id'])
-			}
-		}
-	})
-}
-
-//Advanced Schema Validator
-const ajv = new Ajv({
-	strict: false,
-	allErrors: true,
-	verbose: true,
-	validateFormats: false,
-})
-
-loadAllSchemas(ajv)
-
 export default defineComponent({
 	components: {
 		PrismEditor,
@@ -139,8 +85,6 @@ export default defineComponent({
 
 			// Insert magic-values to use as regex base
 			this.ranges.forEach((element) => {
-				console.log('TEST')
-				console.log(element)
 				temp = temp.replaceAt(element['start'], '1')
 				temp = temp.replaceAt(element['end'], '2')
 			})
@@ -149,8 +93,19 @@ export default defineComponent({
 			temp = temp.replaceAll('1', '<span class="error-underline">')
 			temp = temp.replaceAll('2', '</span>')
 
-			console.log(temp)
 			return temp
+		},
+		schemaOptions() {
+			return [
+				{
+					name: 'Skins',
+					schema: 'skins',
+				},
+				{
+					name: 'BP Animation Controller',
+					schema: 'bp/animation_controller',
+				},
+			]
 		},
 		compiledSchemas() {
 			return this.schemas.filter((element) => element['compile'])
@@ -181,8 +136,6 @@ export default defineComponent({
 		},
 		getValidator() {
 			const v = this.selected['validator']
-			console.log('Fetching!')
-			console.log(v)
 			return v
 		},
 		format() {
@@ -202,8 +155,10 @@ export default defineComponent({
 				return
 			}
 
-			// Validate
-			const testData = JSON.parse(this.editorCode)
+			const testData = JSON.stringify({
+				data: this.editorCode,
+				schema_name: this.selected.schema,
+			})
 
 			// Fetch and display errors
 			fetch('http://127.0.0.1:5000/api/validate_schema', {
@@ -216,6 +171,11 @@ export default defineComponent({
 				.then((response) => response.json())
 				.then((error) => {
 					try {
+						if (error['valid']) {
+							this.addMessage('Your JSON is valid!', 'Success!')
+							return
+						}
+
 						const prettyError = ErrorPrettifier.prettify(
 							this.editorCode,
 							error
@@ -258,7 +218,6 @@ export default defineComponent({
 }
 .error-overlay {
 	pointer-events: none;
-	/* you must provide font-family font-size line-height. Example: */
 	font-family: Fira code, Fira Mono, Consolas, Menlo, Courier, monospace;
 	font-size: 14px;
 	line-height: 1.5;
@@ -275,18 +234,14 @@ export default defineComponent({
 	position: absolute;
 }
 .my-editor {
-	/* we dont use `language-` classes anymore so thats why we need to add background and text color manually */
 	background: #2d2d2d;
 	color: #ccc;
-
-	/* you must provide font-family font-size line-height. Example: */
 	font-family: Fira code, Fira Mono, Consolas, Menlo, Courier, monospace;
 	font-size: 14px;
 	line-height: 1.5;
 	padding: 5px;
 }
 
-/* optional class for removing the outline */
 .prism-editor__textarea:focus {
 	outline: none;
 }
