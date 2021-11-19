@@ -1,5 +1,5 @@
 <template>
-	<select v-model="selected">
+	<select v-model="selected_schema">
 		<option v-bind:value="schema" v-for="schema in this.schemaOptions">
 			{{ schema.name }}
 		</option>
@@ -23,6 +23,7 @@
 		v-for="message in this.messages"
 		:title="message.title"
 		:message="message.message"
+		:type="message.type"
 	></Message>
 	<div class="rel">
 		<prism-editor
@@ -98,12 +99,64 @@ export default defineComponent({
 		schemaOptions() {
 			return [
 				{
-					name: 'Skins',
-					schema: 'skins',
+					name: 'BP Animation Controller',
+					path: 'behavior/animation_controllers/animation_controller',
 				},
 				{
-					name: 'BP Animation Controller',
-					schema: 'bp/animation_controller',
+					name: 'BP Animation',
+					path: 'behavior/animations/animations',
+				},
+				{
+					name: 'BP Biome',
+					path: 'behavior/biomes/biomes',
+				},
+				{
+					name: 'BP Block',
+					path: 'behavior/blocks/blocks',
+				},
+				{
+					name: 'BP Entity',
+					path: 'behavior/entities/entities',
+				},
+				{
+					name: 'BP Feature Rule',
+					path: 'behavior/feature_rules/feature_rules',
+				},
+				{
+					name: 'BP Feature Rule',
+					path: 'behavior/feature_rules/feature_rules',
+				},
+				{
+					name: 'BP Feature',
+					path: 'behavior/features/features',
+				},
+				{
+					name: 'BP Item',
+					path: 'behavior/items/items',
+				},
+				{
+					name: 'BP Loot Table',
+					path: 'behavior/loot_tables/loot_tables',
+				},
+				{
+					name: 'BP Loot Table',
+					path: 'behavior/loot_tables/loot_tables',
+				},
+				{
+					name: 'BP Recipe',
+					path: 'behavior/recipes/recipes',
+				},
+				{
+					name: 'BP Spawn Rules',
+					path: 'behavior/spawn_rules/spawn_rules',
+				},
+				{
+					name: 'BP Trading',
+					path: 'behavior/trading/trading',
+				},
+				{
+					name: 'BP Volume',
+					path: 'behavior/volumes/volumes',
 				},
 			]
 		},
@@ -113,16 +166,10 @@ export default defineComponent({
 	},
 	data() {
 		return {
-			selected: {},
-			skins_validator,
-			schemas: [
-				{
-					id: 'skins',
-					name: 'Skins',
-					compile: true,
-					validator: skins_validator,
-				},
-			],
+			selected_schema: {
+				name: 'Select a Schema',
+				path: '',
+			},
 			messages: [],
 			ranges: [],
 		}
@@ -131,12 +178,17 @@ export default defineComponent({
 		clearMessages() {
 			this.messages = []
 		},
-		addMessage(title, message) {
-			this.messages.push({ message: message, title: title })
+		addMessage(title, message, type) {
+			this.messages.push({ message: message, title: title, type: type })
 		},
-		getValidator() {
-			const v = this.selected['validator']
-			return v
+		addError(title, message) {
+			this.addMessage(title, message, 'error')
+		},
+		addWarning(title, message) {
+			this.addMessage(title, message, 'warning')
+		},
+		addSuccess(title, message) {
+			this.addMessage(title, message, 'success')
 		},
 		format() {
 			// Clear old runs
@@ -151,13 +203,13 @@ export default defineComponent({
 					3
 				)
 			} catch (err) {
-				this.addMessage('Your JSON is not valid:', err.message)
+				this.addError('Your JSON is not valid:', err.message)
 				return
 			}
 
 			const testData = JSON.stringify({
 				data: this.editorCode,
-				schema_name: this.selected.schema,
+				path: this.selected_schema.path,
 			})
 
 			// Fetch and display errors
@@ -171,8 +223,8 @@ export default defineComponent({
 				.then((response) => response.json())
 				.then((error) => {
 					try {
-						if (error['valid']) {
-							this.addMessage('Your JSON is valid!', 'Success!')
+						if (error.valid) {
+							this.addSuccess(error.title, error.message)
 							return
 						}
 
@@ -181,17 +233,14 @@ export default defineComponent({
 							error
 						)
 
-						if (prettyError['message'].includes('"then"')) {
-							return
-						}
+						this.addError(error.title, error.message)
 
-						this.addMessage('Pretty error:', prettyError['message'])
 						this.ranges.push({
 							start: prettyError['start']['offset'],
 							end: prettyError['end']['offset'],
 						})
 					} catch (error) {
-						this.addMessage(
+						this.addWarning(
 							'Your JSON could not be understood',
 							'Did you select wrong schema type?' + error.message
 						)

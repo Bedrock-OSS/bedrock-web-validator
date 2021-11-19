@@ -1,5 +1,5 @@
 <template>
-	<div class="tip custom-block">
+	<div :class="['custom-block', this.type]">
 		<p class="custom-block-title">{{ this.title }}</p>
 		<p>{{ this.message }}</p>
 	</div>
@@ -36,7 +36,7 @@ export default defineComponent({
 	margin-inline-end: 0px;
 }
 
-.custom-block.tip {
+.custom-block.success {
 	border-color: #3eaf7c;
 	background-color: #f3f5f7;
 	color: black;
@@ -46,7 +46,7 @@ export default defineComponent({
 	color: #6b5900;
 	background-color: rgba(255, 229, 100, 0.3);
 }
-.custom-block.danger {
+.custom-block.error {
 	border-color: #c00;
 	color: #4d0000;
 	background-color: #ffe6e6;

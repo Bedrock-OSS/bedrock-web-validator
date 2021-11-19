@@ -9,7 +9,7 @@ export default class ErrorPrettifier {
 		}
 
 		let ast = parse(json, settings)
-		let result = this.childByPath(ast, error.path)
+		let result = this.childByPath(ast, error.path || '/')
 		result.message = error.message
 		console.log(result)
 		return result
