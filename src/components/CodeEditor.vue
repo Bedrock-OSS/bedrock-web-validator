@@ -1,9 +1,43 @@
 <template>
-	<select v-model="selected_schema">
-		<option v-bind:value="schema" v-for="schema in this.schemaOptions">
-			{{ schema.name }}
-		</option>
-	</select>
+	<div>
+		<select
+			v-model="selected_schema"
+			class="
+				appearance-none
+				outline-none
+				select-none
+				leading-4
+				rounded-md
+				border-1 border-gray-200
+				dark:border-true-gray-600
+				focus:border-blue-300
+				focus:ring
+				focus:ring-blue-200
+				focus:ring-opacity-50
+				dark:bg-dark-gray-900 dark:border-dark-gray-800
+				text-sm
+				py-2
+				px-8
+				block
+			"
+		>
+			>
+			<option v-bind:value="schema" v-for="schema in this.schemaOptions">
+				{{ schema.name }}
+			</option>
+		</select>
+		<ChevronLeftIcon
+			class="
+				absolute
+				opacity-70
+				top-1
+				right-1
+				transform
+				-rotate-90
+				pointer-events-none
+			"
+		/>
+	</div>
 
 	<button
 		@click="format"
@@ -53,9 +87,9 @@ import 'prismjs/themes/prism-tomorrow.css' // import syntax highlighting styles
 import 'prismjs/components/prism-json'
 import { defineComponent, onMounted, ref } from 'vue'
 
-import ErrorPrettifier from '../ErrorPrettifier'
+import ChevronLeftIcon from './ChevronLeftIcon.vue'
 
-import * as skins_validator from '../static/schemas/skins.js'
+import ErrorPrettifier from '../ErrorPrettifier'
 
 // https://stackoverflow.com/questions/4313841/insert-a-string-at-a-specific-index
 String.prototype.insert = function (index, string) {
@@ -77,6 +111,7 @@ export default defineComponent({
 	components: {
 		PrismEditor,
 		Message,
+		ChevronLeftIcon,
 	},
 	computed: {
 		overlayCode() {
