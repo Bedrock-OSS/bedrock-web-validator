@@ -9,8 +9,8 @@ app = Flask(__name__)
 CORS(app)
 
 @app.route("/")
-def hello_world():
-    return "<p>Hello, World!</p>"
+def main():
+    return "This is an API. Please see: https://github.com/Bedrock-OSS/bedrock-web-validator"
 
 @app.route('/api/validate_schema', methods=['GET', 'POST'])
 def validate_schema():
@@ -25,7 +25,6 @@ def validate_schema():
     schema_name = str(content['path'])
     data = json.loads(content['data'])
     
-    print(content)
     schema = get_schema(schema_name)
 
     if schema is None:
@@ -76,11 +75,11 @@ def get_schema(schema_name):
         path = '../schemas/' + schema_name + '.json'
         print(path)
         with open(path, 'r', encoding="utf-8-sig") as f:
-            schema = json.load(f)
+            return json.load(f)
 
-            # Workaround: https://github.com/Blockception/Minecraft-bedrock-json-schemas/issues/17
-            schema["$schema"] = "http://json-schema.org/draft-07/schema#"
-            return schema
+            # # Workaround: https://github.com/Blockception/Minecraft-bedrock-json-schemas/issues/17
+            # schema["$schema"] = "http://json-schema.org/draft-07/schema#"
+            # return schema
 
     except FileNotFoundError:
         return None
